@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model workspace {
+  id            String   @unique @default(uuid())
+  name          String
+  members       member[]
+  AdminMemberId String
+  isPublic      Boolean  @default(false)
+  icon          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  bords     board[]
+}
+
+model board {
+  id             String   @unique @default(uuid())
+  name           String
+  backroundColor String
+  isFavorite     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  lists          list[]
+
+  workspaceId String
+  workspace   workspace? @relation(fields: [workspaceId], references: [id])
+}
+
+model list {
+  id        String   @unique @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  cards     card[]
+
+  boardId String?
+  board   board?  @relation(fields: [boardId], references: [id])
+}
+
+model card {
+  id          String   @id @unique @default(uuid())
+  title       String
+  description String?
+  tags        tag[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  attachment attachment?
+  list       list?       @relation(fields: [listId], references: [id])
+
+  listId String?
+}
+
+model attachment {
+  id        String   @unique @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cardId String @unique
+
+  card card @relation(fields: [cardId], references: [id])
+}
+
+model member {
+  id String @unique
+
+  workspace   workspace? @relation(fields: [workspaceId], references: [id])
+  workspaceId String?
+}
+
+model tag {
+  id String @id @unique @default(uuid())
+
+  card card[]
+}
