@@ -1,20 +1,32 @@
 import { db } from "@/db";
-import TaskLists from "./_components/task-lists";
-import TaskNavbar from "./_components/task-navbar";
+import BoardNavbar from "./_components/board-navbar";
 import { auth } from "@clerk/nextjs";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
+import Board from "./_components/board";
 
 export default async function BoardPage({ params: { boardId } }: { params: { boardId: string } }) {
   const { userId } = auth();
-  if (!userId) return redirect("/");
+  if (!userId) throw new Error("unauthorized user");
+
+  const curBoard = await db.board.findUnique({
+    where: { id: boardId, workspace: { AdminMemberId: userId } },
+  });
+  if (!curBoard) return notFound();
+
   const lists = await db.list.findMany({
     where: { boardId, board: { workspace: { AdminMemberId: userId } } },
-    include: { cards: true },
+    include: { cards: { orderBy: { index: "asc" } } },
+    orderBy: { index: "asc" },
   });
+
   return (
     <>
-      <TaskNavbar />
-      <TaskLists lists={lists} />
+      <div
+        style={{ backgroundColor: curBoard.backgroundColor }}
+        className="size-full opacity-50 absolute top-0 left-0 -z-10"
+      />
+      <BoardNavbar boardName={curBoard.name} />
+      <Board boardLists={lists} />
     </>
   );
 }

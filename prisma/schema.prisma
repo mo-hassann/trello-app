@@ -27,24 +27,25 @@ model workspace {
 }
 
 model board {
-  id             String   @unique @default(uuid())
-  name           String
-  backroundColor String
-  isFavorite     Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  lists          list[]
+  id              String   @unique @default(uuid())
+  name            String
+  backgroundColor String
+  isFavorite      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lists           list[]
 
   workspaceId String
   workspace   workspace? @relation(fields: [workspaceId], references: [id])
 }
 
 model list {
-  id        String   @unique @default(uuid())
+  id        String   @id @unique @default(uuid())
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   cards     card[]
+  index     Int
 
   boardId String?
   board   board?  @relation(fields: [boardId], references: [id])
@@ -55,6 +56,7 @@ model card {
   title       String
   description String?
   tags        tag[]
+  index       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

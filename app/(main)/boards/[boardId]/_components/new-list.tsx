@@ -18,7 +18,7 @@ export default function NewList() {
   return (
     <Dialog>
       <div className="bg-muted rounded-md flex flex-col p-3">
-        <DialogTrigger className="w-[310px] flex items-center justify-center gap-2 p-3 rounded-md place-self-start flex-shrink-0 bg-primary">
+        <DialogTrigger className="w-[310px] flex items-center justify-center gap-2 p-3 rounded-md place-self-start flex-shrink-0 bg-primary text-white">
           <Plus />
           <p>new list</p>
         </DialogTrigger>

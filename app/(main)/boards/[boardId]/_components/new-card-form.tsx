@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/components/ui/use-toast";
@@ -39,6 +39,10 @@ export default function NewCardForm({ listId }: { listId: string }) {
         });
     });
   };
+
+  useEffect(() => {
+    if (isActive) form.setFocus("title");
+  }, [form, isActive]);
 
   return (
     <>

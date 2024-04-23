@@ -9,7 +9,9 @@ export default function MainRoutes({ children }: { children: ReactNode; currentU
       <Navbar />
       <div className="flex gap-3 h-full">
         <Sidebar className="hidden md:flex h-full" />
-        <div className="bg-muted/20 p-3 rounded-md w-full h-full overflow-x-hidden">{children}</div>
+        <div className="bg-muted/20 p-3 rounded-md w-full h-full overflow-x-hidden relative">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -23,11 +23,16 @@ export const createNewList = async (data: dataType, boardId: string) => {
     if (!curBoard) return { error: "board does not exist" };
     if (curBoard.workspace?.AdminMemberId !== userId) return { error: "unauthorized" };
 
-    const newBoard = await db.list.create({ data: { name, boardId: curBoard.id } });
+    const listNumbers = await db.list.count({
+      where: { boardId },
+    });
+    const newList = await db.list.create({
+      data: { name, boardId: curBoard.id, index: listNumbers },
+    });
 
-    revalidatePath(`/boards/${newBoard.boardId}`);
+    revalidatePath(`/boards/${newList.boardId}`);
 
-    return { success: `${newBoard.name} created successfully`, data: newBoard };
+    return { success: `${newList.name} created successfully`, data: newList };
   } catch (error: any) {
     return { error: error.message || "server error" };
   }

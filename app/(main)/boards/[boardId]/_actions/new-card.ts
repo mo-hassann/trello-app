@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
 import { auth } from "@clerk/nextjs";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import { newCardFromSchema } from "../_schemas";
 
@@ -23,7 +23,13 @@ export const createNewCard = async (data: dataType, boardId: string, listId: str
     if (!curList) return { error: "list does not exist" };
     if (curList?.board?.workspace?.AdminMemberId !== userId) return { error: "unauthorized" };
 
-    const newCard = await db.card.create({ data: { title, listId: curList.id } });
+    const cardsNumbers = await db.card.count({
+      where: { listId },
+    });
+    console.log(cardsNumbers, "CARDS NOMS");
+    const newCard = await db.card.create({
+      data: { title, listId: curList.id, index: cardsNumbers },
+    });
 
     revalidatePath(`/boards/${boardId}`);
 

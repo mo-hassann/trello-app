@@ -24,7 +24,7 @@ export const createNewBoard = async (data: dataType, workspaceId: string) => {
     if (curWorkspace.AdminMemberId !== userId) return { error: "unauthorized" };
 
     const newBoard = await db.board.create({
-      data: { name, workspaceId, backroundColor: boardColor },
+      data: { name, workspaceId, backgroundColor: boardColor },
     });
 
     revalidatePath(`/workspaces/${workspaceId}`);

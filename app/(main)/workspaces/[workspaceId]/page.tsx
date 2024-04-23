@@ -18,7 +18,7 @@ export default async function workspacePage({
             key={board.id}
             id={board.id}
             boardName={board.name}
-            boardColor={board.backroundColor}
+            boardColor={board.backgroundColor}
           />
         ))}
 

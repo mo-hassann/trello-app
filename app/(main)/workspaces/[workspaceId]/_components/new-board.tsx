@@ -14,7 +14,7 @@ import NewBoardFrom from "./new-board-form";
 export default function NewBoard() {
   return (
     <Dialog>
-      <DialogTrigger className="bg-muted flex items-center justify-center rounded-md p-3 w-[175px] h-[90px]">
+      <DialogTrigger className="bg-muted flex items-center justify-center rounded-md p-3 w-[175px] h-[90px] hover:opacity-80 transition-opacity">
         <Plus />
         &nbsp;<h4>New Board</h4>
       </DialogTrigger>
