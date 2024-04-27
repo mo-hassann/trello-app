@@ -1,0 +1,46 @@
+import { z } from "zod";
+
+// workspaces
+export const newWorkspaceFormSchema = z.object({
+  name: z.string().min(3, "workspace name must be grader then 3"),
+});
+
+export const editWorkspaceFormSchema = z.object({
+  name: z.string().min(3, "workspace name must be grader then 3"),
+  isPublic: z.boolean(),
+});
+
+export const editWorkspaceImgSchema = z.object({
+  url: z.string().url(),
+});
+
+// boards
+export const newBoardFromSchema = z.object({
+  name: z.string().min(1, "name is required"),
+  boardColor: z.string().min(1, "color is required"),
+});
+
+// lists
+export const newListFromSchema = z.object({
+  name: z.string().min(1, "name is required"),
+});
+
+export const listsToReorderSchema = z.array(
+  z.object({
+    id: z.string().min(1, "id is required"),
+    newIndex: z.number().gte(0),
+  })
+);
+
+// cards
+export const newCardFromSchema = z.object({
+  title: z.string().min(1, "name is required"),
+});
+
+export const cardsToReorderSchema = z.array(
+  z.object({
+    id: z.string().min(1, "id is required"),
+    newIndex: z.number().gte(0),
+    newListId: z.string().optional(),
+  })
+);

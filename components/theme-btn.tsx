@@ -1,18 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Spinner from "./spinner";
 
 import { useTheme } from "next-themes";
 
 import { Switch } from "./ui/switch";
 import { BsFillSunFill, BsMoonStars } from "react-icons/bs";
+import { useMounted } from "@/hooks/useMounted";
 
 export default function ThemeBtn() {
   const { theme, setTheme } = useTheme();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => setIsMounted(true), [isMounted]);
+  const isMounted = useMounted();
 
   if (!isMounted) return <Spinner />;
 

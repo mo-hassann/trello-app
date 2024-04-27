@@ -2,13 +2,19 @@ import { db } from "@/db";
 
 import BoardLink from "./_components/board-link";
 import NewBoard from "./_components/new-board";
+import { unstable_cache as cache } from "next/cache";
+
+const getBoards = cache(
+  async (workspaceId: string) => db.board.findMany({ where: { workspaceId } }),
+  ["boards"]
+);
 
 export default async function workspacePage({
   params: { workspaceId },
 }: {
   params: { workspaceId: string };
 }) {
-  const boards = await db.board.findMany({ where: { workspaceId } });
+  const boards = await getBoards(workspaceId);
   return (
     <div>
       <h2 className="mb-3">workspace boards</h2>

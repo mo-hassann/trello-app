@@ -14,17 +14,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createWorkspace } from "../actions";
 import { useTransition } from "react";
 import { toast } from "@/components/ui/use-toast";
-import { workspaceFormSchema } from "../_schemas";
 import { useRouter } from "next/navigation";
+import { createWorkspace } from "@/actions/workspace/new-workspace";
+import { newWorkspaceFormSchema } from "@/validation";
 
-type dataType = z.infer<typeof workspaceFormSchema>;
+type dataType = z.infer<typeof newWorkspaceFormSchema>;
 
 export default function CreateWorkspaceFrom() {
   const form = useForm<dataType>({
-    resolver: zodResolver(workspaceFormSchema),
+    resolver: zodResolver(newWorkspaceFormSchema),
     defaultValues: {
       name: "",
     },

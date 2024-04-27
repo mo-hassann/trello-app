@@ -17,9 +17,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/components/ui/use-toast";
 import { useParams } from "next/navigation";
-import { newBoardFromSchema } from "../_schemas";
-import { createNewBoard } from "../_actions/new-board";
+import { createNewBoard } from "@/actions/board/new-board";
 import { DialogFooter } from "@/components/ui/dialog";
+import { newBoardFromSchema } from "@/validation";
 
 type dataType = z.infer<typeof newBoardFromSchema>;
 

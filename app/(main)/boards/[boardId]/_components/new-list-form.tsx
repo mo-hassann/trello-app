@@ -15,11 +15,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { createNewList } from "../_actions/new-list";
+import { createNewList } from "@/actions/list/new-list";
 import { toast } from "@/components/ui/use-toast";
 import { useParams } from "next/navigation";
-import { newListFromSchema } from "../_schemas";
+
 import { DialogFooter } from "@/components/ui/dialog";
+import { newListFromSchema } from "@/validation";
 
 type dataType = z.infer<typeof newListFromSchema>;
 

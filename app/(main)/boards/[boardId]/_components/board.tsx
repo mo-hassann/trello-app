@@ -6,9 +6,9 @@ import { cn } from "@/lib/utils";
 import List from "./list";
 import NewList from "./new-list";
 import { toast } from "@/components/ui/use-toast";
-import { reorderListsAction } from "../_actions/reorder-lists";
+import { reorderListsAction } from "@/actions/list/reorder-lists";
 import { useParams } from "next/navigation";
-import { reorderCardAction } from "../_actions/reorder-cards";
+import { reorderCardAction } from "@/actions/card/reorder-cards";
 
 export default function Board({ boardLists }: { boardLists: (list & { cards: card[] })[] }) {
   const [lists, setLists] = useState(boardLists);

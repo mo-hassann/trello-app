@@ -1,7 +1,6 @@
 import Navbar from "@/components/layout/navbar";
 import Sidebar from "@/components/layout/sidebar";
 import type { ReactNode } from "react";
-import { headers } from "next/headers";
 
 export default function MainRoutes({ children }: { children: ReactNode; currentUrl?: string }) {
   return (

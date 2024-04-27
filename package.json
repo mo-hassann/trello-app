@@ -21,7 +21,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.5",
-    "@uploadthing/react": "^6.4.4",
+    "@uploadthing/react": "^6.5.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.368.0",
@@ -35,7 +35,7 @@
     "swr": "^2.2.5",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
-    "uploadthing": "^6.9.0",
+    "uploadthing": "^6.10.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {

@@ -2,19 +2,19 @@
 
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
+import { cardsToReorderSchema } from "@/validation";
 import { auth } from "@clerk/nextjs";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
-import { listsToUpdateSchema } from "../_schemas";
 
-type dataType = z.infer<typeof listsToUpdateSchema>;
+type dataType = z.infer<typeof cardsToReorderSchema>;
 
-export const reorderListsAction = async (data: dataType, boardId: string) => {
+export const reorderCardAction = async (data: dataType, boardId: string) => {
   try {
     const { userId } = auth();
     if (!userId) return { error: "unauthorized" };
 
-    const itemsToUpdate = validateMyData(listsToUpdateSchema, data);
+    const itemsToReorder = validateMyData(cardsToReorderSchema, data);
 
     const curBoard = await db.board.findUnique({
       where: { id: boardId },
@@ -24,17 +24,18 @@ export const reorderListsAction = async (data: dataType, boardId: string) => {
     if (curBoard.workspace?.AdminMemberId !== userId) return { error: "unauthorized" };
 
     await Promise.all(
-      itemsToUpdate.map(async (item) => {
-        await db.list.update({
+      itemsToReorder.map(async (item) => {
+        await db.card.update({
           where: { id: item.id },
-          data: { index: item.newIndex },
+          data: { index: item.newIndex, ...(item.newListId && { listId: item.newListId }) },
         });
       })
     );
 
     revalidatePath(`/boards/${curBoard.id}`);
+    revalidateTag(`lists`);
 
-    return { success: `${curBoard.name} lists updated successfully` };
+    return { success: `${curBoard.name} cards reordered successfully` };
   } catch (error: any) {
     return { error: error.message || "server error" };
   }

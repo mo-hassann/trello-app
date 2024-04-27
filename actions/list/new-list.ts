@@ -2,10 +2,10 @@
 
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
+import { newListFromSchema } from "@/validation";
 import { auth } from "@clerk/nextjs";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
-import { newListFromSchema } from "../_schemas";
 
 type dataType = z.infer<typeof newListFromSchema>;
 
@@ -31,6 +31,7 @@ export const createNewList = async (data: dataType, boardId: string) => {
     });
 
     revalidatePath(`/boards/${newList.boardId}`);
+    revalidateTag(`lists`);
 
     return { success: `${newList.name} created successfully`, data: newList };
   } catch (error: any) {

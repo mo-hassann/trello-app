@@ -9,9 +9,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "@/components/ui/use-toast";
 import { useParams } from "next/navigation";
-import { newCardFromSchema } from "../_schemas";
 import { Plus } from "lucide-react";
-import { createNewCard } from "../_actions/new-card";
+import { createNewCard } from "@/actions/card/new-card";
+import { newCardFromSchema } from "@/validation";
 
 type dataType = z.infer<typeof newCardFromSchema>;
 

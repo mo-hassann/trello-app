@@ -10,6 +10,7 @@ import { BsClipboard2Check } from "react-icons/bs";
 import { AiOutlineHeart } from "react-icons/ai";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { CircuitBoardIcon, Heart, HeartIcon, Settings } from "lucide-react";
 
 type WorkSpaceProps = { icon?: string | null; id: string; name: string };
 
@@ -29,13 +30,19 @@ export default function WorkSpace({ icon, id, name }: WorkSpaceProps) {
             href={`/workspaces/${id}`}
             className="flex items-center justify-start gap-2 hover:bg-white/10 py-2 pl-10 pr-3 w-full rounded-md"
           >
-            <BsClipboard2Check /> <span>boards</span>
+            <CircuitBoardIcon /> <span>boards</span>
           </Link>
           <Link
             href={`/workspaces/${id}?filter=favorite`}
             className="flex items-center justify-start gap-2 hover:bg-white/10 py-2 pl-10 pr-3 w-full rounded-md"
           >
-            <AiOutlineHeart /> <span>favorite boards</span>
+            <HeartIcon /> <span>favorite boards</span>
+          </Link>
+          <Link
+            href={`/workspaces/${id}/settings`}
+            className="flex items-center justify-start gap-2 hover:bg-white/10 py-2 pl-10 pr-3 w-full rounded-md"
+          >
+            <Settings /> <span>settings</span>
           </Link>
         </AccordionContent>
       </AccordionItem>

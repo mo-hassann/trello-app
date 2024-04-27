@@ -2,10 +2,10 @@
 
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
+import { newBoardFromSchema } from "@/validation";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { newBoardFromSchema } from "../_schemas";
 
 type dataType = z.infer<typeof newBoardFromSchema>;
 

@@ -2,10 +2,10 @@
 
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
+import { newCardFromSchema } from "@/validation";
 import { auth } from "@clerk/nextjs";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
-import { newCardFromSchema } from "../_schemas";
 
 type dataType = z.infer<typeof newCardFromSchema>;
 
@@ -32,6 +32,7 @@ export const createNewCard = async (data: dataType, boardId: string, listId: str
     });
 
     revalidatePath(`/boards/${boardId}`);
+    revalidateTag(`lists`);
 
     return { success: `${newCard.title} created successfully`, data: newCard };
   } catch (error: any) {
