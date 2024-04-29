@@ -18,6 +18,9 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
 
   // reorder the lists in the board
   const reorderLists = (curIndex: number, newIndex: number) => {
+    // check if no movement
+    if (curIndex === newIndex) return;
+
     const myLists = [...lists];
 
     // reorder item to the new position
@@ -58,6 +61,9 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
 
     // if the cards moves on the same list only change the position of the cards
     if (curListId === newListId) {
+      // check if no movement
+      if (curIndex === newIndex) return;
+
       const curListCards = [...cards.filter((card) => card.listId === curListId)];
       const cardsWithoutCurListCards = [...cards.filter((card) => card.listId !== curListId)];
 
@@ -135,10 +141,14 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
-            className={cn(snapshot.isDraggingOver && "bg-muted-foreground/20 rounded-md")}
+            className={cn(
+              "border border-hidden",
+              snapshot.isDraggingOver &&
+                "border-dashed border-muted-foreground bg-muted-foreground/10 rounded-md"
+            )}
             {...provided.droppableProps}
           >
-            <div className="flex items-start gap-5 overflow-x-auto w-full py-3">
+            <div className="flex items-start space-x-5 overflow-x-auto w-full py-3 px-2">
               {lists.map((list, i) => (
                 <Draggable key={list.id} draggableId={`${list.id}`} index={i}>
                   {(provided, snapshot) => (

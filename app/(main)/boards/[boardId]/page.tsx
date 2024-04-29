@@ -34,10 +34,7 @@ export default async function BoardPage({ params: { boardId } }: { params: { boa
 
   return (
     <>
-      <div
-        style={{ backgroundColor: curBoard.backgroundColor }}
-        className="size-full opacity-50 absolute top-0 left-0 -z-10"
-      />
+      <div className="size-full opacity-50 absolute top-0 left-0 -z-10" />
       <BoardNavbar boardName={curBoard.name} />
       <Board boardLists={lists} />
     </>

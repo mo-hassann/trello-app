@@ -37,7 +37,7 @@ export default async function WorkspaceSettings({
   return (
     <div className="size-full">
       <div className="bg-muted p-3 mb-8 rounded-md">
-        <div className="w-full bg-red-400 rounded-md h-[150px]" />
+        <div className="w-full bg-background border-2 border-dashed border-primary rounded-md h-[150px]" />
         <Avatar className="size-[100px] mx-auto -mt-[50px] mb-4 relative">
           <AvatarImage src={curWorkspace.icon || undefined} />
           <AvatarFallback className="bg-primary text-white">

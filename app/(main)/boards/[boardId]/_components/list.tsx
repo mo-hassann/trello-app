@@ -16,21 +16,32 @@ type ListProps = {
 
 export default function List({ id, listName, cards }: ListProps) {
   return (
-    <div className="rounded-md p-3 bg-muted text-muted-foreground w-[310px] flex-shrink-0">
+    <div className="rounded-lg p-3 bg-muted text-muted-foreground w-[310px] max-h-[600px] overflow-y-auto flex-shrink-0">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">{listName}</h2>
+        <div className="flex items-center gap-3">
+          <div className="size-2 bg-primary rounded-full" />
+          <h2 className="text-lg font-semibold text-foreground capitalize">{listName}</h2>
+          <div className="flex items-center justify-center text-xs font-semibold rounded-full size-5 text-muted-foreground bg-muted-foreground/30">
+            <span>{cards.length}</span>
+          </div>
+        </div>
         <Button className="p-0 hover:bg-slate-200/20 size-8 text-sm" variant="ghost">
           <MoreHorizontalIcon />
         </Button>
       </div>
+      <div className="w-full h-[3px] bg-primary rounded-full my-4" />
       <Droppable droppableId={`${id}`} type="LIST">
         {(provided, snapshot) => (
           <div
             ref={provided.innerRef}
-            className={cn(snapshot.isDraggingOver && "bg-muted-foreground/20 rounded-md")}
+            className={cn(
+              "border border-hidden",
+              snapshot.isDraggingOver &&
+                "border-dashed border-muted-foreground bg-muted-foreground/10 rounded-md"
+            )}
             {...provided.droppableProps}
           >
-            <div className="flex flex-col gap-3 my-4">
+            <div className="flex flex-col space-y-3 my-4 p-1">
               {cards.length === 0 && (
                 <p className="italic text-center text-muted-foreground">no cards here 😥</p>
               )}
@@ -42,7 +53,7 @@ export default function List({ id, listName, cards }: ListProps) {
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        className="bg-background rounded-lg p-4 border-2 hover:border-primary flex justify-between"
+                        className="bg-background rounded-xl p-4 hover:border-primary flex justify-between"
                       >
                         <CardContent title={card.title} />
                         <Button
