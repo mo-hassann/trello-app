@@ -1,4 +1,4 @@
-import { UserButton } from "@clerk/nextjs";
+import { UserButton } from "@/components/auth/user-button";
 import ThemeBtn from "../theme-btn";
 import Logo from "../logo";
 import MobileSidebarBtn from "./mobile-sidebar-btn";

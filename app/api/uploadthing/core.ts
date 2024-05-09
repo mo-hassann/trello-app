@@ -1,4 +1,4 @@
-import { handleAuth } from "@/lib/handle-auth";
+import { handleAuth } from "@/lib/auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();

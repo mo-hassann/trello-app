@@ -1,12 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { db } from "@/db";
-import { auth } from "@clerk/nextjs";
-import { unstable_cache as cache } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React from "react";
-import EditWorkspaceForm from "../_components/edit-workspace-form";
+import EditWorkspaceForm from "../../_components/edit-workspace-form";
 import { Lock, Pen } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -15,23 +12,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import EditWorkspaceImg from "../_components/edit-workspace-img";
-
-const getCurWorkspace = cache(
-  async ({ workspaceId, userId }: { workspaceId: string; userId: string }) =>
-    db.workspace.findUnique({ where: { id: workspaceId, AdminMemberId: userId } }),
-  ["workspace"]
-);
+import EditWorkspaceImg from "../../_components/edit-workspace-img";
+import { currentUser } from "@/lib/auth";
+import InvitationLink from "../../_components/invitation-link";
 
 export default async function WorkspaceSettings({
   params: { workspaceId },
 }: {
   params: { workspaceId: string };
 }) {
-  const { userId } = auth();
-  if (!userId) throw new Error("unauthorized user");
+  const curUser = await currentUser();
+  if (!curUser || !curUser.id) return redirect("/login");
 
-  const curWorkspace = await getCurWorkspace({ workspaceId, userId });
+  const curWorkspace = await db.workspace.findUnique({
+    where: { id: workspaceId, adminId: curUser.id },
+    select: { name: true, isPublic: true, icon: true, invitationLink: { select: { id: true } } },
+  });
   if (!curWorkspace) return notFound();
 
   return (
@@ -66,14 +62,26 @@ export default async function WorkspaceSettings({
           </span>
         </div>
       </div>
-      <div className="bg-muted rounded-md size-full p-5">
-        <div className="my-5 space-y-1">
-          <h3 className="text-3xl font-bold capitalize">workspace settings</h3>
-          <p className="text-muted-foreground">
-            edit work space information here such as the workspace name and the work space access.
-          </p>
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
+        <div className="bg-muted rounded-md size-full p-5">
+          <div className="my-5 space-y-1">
+            <h3 className="text-3xl font-bold capitalize">workspace settings</h3>
+            <p className="text-muted-foreground">
+              edit work space information here such as the workspace name and the work space access.
+            </p>
+          </div>
+          <EditWorkspaceForm workspaceName={curWorkspace.name} isPublic={curWorkspace.isPublic} />
         </div>
-        <EditWorkspaceForm workspaceName={curWorkspace.name} isPublic={curWorkspace.isPublic} />
+        <div className="bg-muted rounded-md size-full p-5">
+          <div className="my-5 space-y-1">
+            <h3 className="text-3xl font-bold capitalize">invitation link</h3>
+          </div>
+          <InvitationLink
+            invitationLink={curWorkspace.invitationLink?.id || null}
+            workspaceId={workspaceId}
+            adminId={curUser.id}
+          />
+        </div>
       </div>
     </div>
   );

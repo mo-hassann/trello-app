@@ -3,28 +3,37 @@
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
 import { newBoardFromSchema } from "@/validation";
-import { auth } from "@clerk/nextjs";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { currentUser } from "@/lib/auth";
 
 type dataType = z.infer<typeof newBoardFromSchema>;
 
 export const createNewBoard = async (data: dataType, workspaceId: string) => {
   try {
-    const { userId } = auth();
-    if (!userId) return { error: "unauthorized" };
+    const curUser = await currentUser();
+    if (!curUser || !curUser.id) return { error: "unauthorized" };
 
     const { name, boardColor } = validateMyData(newBoardFromSchema, data);
 
     const curWorkspace = await db.workspace.findUnique({
       where: { id: workspaceId },
-      select: { id: true, AdminMemberId: true },
+      select: { id: true, adminId: true, members: { select: { id: true } } },
     });
     if (!curWorkspace) return { error: "workspace does not exist" };
-    if (curWorkspace.AdminMemberId !== userId) return { error: "unauthorized" };
+    if (curWorkspace.adminId !== curUser.id) return { error: "unauthorized" };
+
+    // get workspace members to add them to the new board
+    const workspaceMembersIds = curWorkspace.members;
 
     const newBoard = await db.board.create({
-      data: { name, workspaceId, backgroundColor: boardColor },
+      data: {
+        name,
+        workspaceId,
+        backgroundColor: boardColor,
+        adminId: curUser.id,
+        members: { connect: workspaceMembersIds },
+      },
     });
 
     revalidatePath(`/workspaces/${workspaceId}`);

@@ -4,17 +4,19 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "./ui/button";
 
-import { BsClipboard2Check } from "react-icons/bs";
-import { AiOutlineHeart } from "react-icons/ai";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { CircuitBoardIcon, Heart, HeartIcon, Settings } from "lucide-react";
+import { CircuitBoardIcon, HeartIcon, Settings } from "lucide-react";
 
-type WorkSpaceProps = { icon?: string | null; id: string; name: string };
+type WorkSpaceProps = {
+  icon?: string | null;
+  id: string;
+  name: string;
+  isCurUserIsAdminUser: boolean;
+};
 
-export default function WorkSpace({ icon, id, name }: WorkSpaceProps) {
+export default function WorkSpace({ icon, id, name, isCurUserIsAdminUser }: WorkSpaceProps) {
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="item-1" className="space-y-1">
@@ -38,12 +40,14 @@ export default function WorkSpace({ icon, id, name }: WorkSpaceProps) {
           >
             <HeartIcon /> <span>favorite boards</span>
           </Link>
-          <Link
-            href={`/workspaces/${id}/settings`}
-            className="flex items-center justify-start gap-2 hover:bg-white/10 py-2 pl-10 pr-3 w-full rounded-md"
-          >
-            <Settings /> <span>settings</span>
-          </Link>
+          {isCurUserIsAdminUser && (
+            <Link
+              href={`/workspaces/${id}/settings`}
+              className="flex items-center justify-start gap-2 hover:bg-white/10 py-2 pl-10 pr-3 w-full rounded-md"
+            >
+              <Settings /> <span>settings</span>
+            </Link>
+          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>

@@ -5,15 +5,7 @@ import { FaRegStar, FaStar } from "react-icons/fa";
 import Link from "next/link";
 import { useState } from "react";
 
-export default function BoardLink({
-  id,
-  boardName,
-  boardColor,
-}: {
-  id: string;
-  boardName: string;
-  boardColor: string;
-}) {
+export default function BoardLink({ id, boardName }: { id: string; boardName: string }) {
   const [isFavorite, setIsFavorite] = useState(false);
   return (
     <div className="relative bg-background hover:bg-primary hover:text-white text-primary border-2 border-dashed border-primary rounded-md p-3 w-[175px] h-[90px]">

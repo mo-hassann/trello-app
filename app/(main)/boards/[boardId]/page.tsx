@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import BoardNavbar from "./_components/board-navbar";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/auth";
 import { notFound } from "next/navigation";
 import Board from "./_components/board";
 import { unstable_cache as cache } from "next/cache";
@@ -8,7 +8,7 @@ import { unstable_cache as cache } from "next/cache";
 const getCurBoard = cache(
   async ({ boardId, userId }: { boardId: string; userId: string }) =>
     db.board.findUnique({
-      where: { id: boardId, workspace: { AdminMemberId: userId } },
+      where: { id: boardId, workspace: { adminId: userId } },
     }),
   ["boards"]
 );
@@ -16,7 +16,7 @@ const getCurBoard = cache(
 const getBoardLists = cache(
   async ({ boardId, userId }: { boardId: string; userId: string }) =>
     await db.list.findMany({
-      where: { boardId, board: { workspace: { AdminMemberId: userId } } },
+      where: { boardId, board: { workspace: { adminId: userId } } },
       include: { cards: { orderBy: { index: "asc" } } },
       orderBy: { index: "asc" },
     }),

@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
 import { newListFromSchema } from "@/validation";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@/auth";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 
@@ -11,17 +11,18 @@ type dataType = z.infer<typeof newListFromSchema>;
 
 export const createNewList = async (data: dataType, boardId: string) => {
   try {
-    const { userId } = auth();
-    if (!userId) return { error: "unauthorized" };
+    const session = await auth();
+    if (!session) return { error: "unauthorized" };
+    const userId = session.user?.id;
 
     const { name } = validateMyData(newListFromSchema, data);
 
     const curBoard = await db.board.findUnique({
       where: { id: boardId },
-      select: { id: true, workspace: { select: { AdminMemberId: true } } },
+      select: { id: true, workspace: { select: { adminId: true } } },
     });
     if (!curBoard) return { error: "board does not exist" };
-    if (curBoard.workspace?.AdminMemberId !== userId) return { error: "unauthorized" };
+    if (curBoard.workspace?.adminId !== userId) return { error: "unauthorized" };
 
     const listNumbers = await db.list.count({
       where: { boardId },

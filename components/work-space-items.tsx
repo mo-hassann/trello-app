@@ -1,19 +1,16 @@
 import WorkSpace from "@/components/work-space";
 import { db } from "@/db";
-import { auth } from "@clerk/nextjs";
 
-import { unstable_cache as cache } from "next/cache";
-
-const getWorkspaces = cache(
-  async (userId: string) => db.workspace.findMany({ where: { AdminMemberId: userId } }),
-  ["workspaces"]
-);
+import { redirect } from "next/navigation";
+import { currentUser } from "@/lib/auth";
 
 export default async function WorkSpaceItems() {
-  const { userId } = auth();
-  if (!userId) throw new Error("unauthorized user");
+  const curUser = await currentUser();
+  if (!curUser || !curUser.id) return redirect("/login");
 
-  const workspaces = await getWorkspaces(userId);
+  const workspaces = await db.workspace.findMany({
+    where: { members: { some: { id: curUser.id } } },
+  });
   return (
     <div>
       <h3 className="my-2 text-sm text-muted-foreground">work spaces</h3>
@@ -23,6 +20,7 @@ export default async function WorkSpaceItems() {
           name={workspace.name}
           id={workspace.id}
           icon={workspace.icon}
+          isCurUserIsAdminUser={workspace.adminId === curUser.id}
         />
       ))}
     </div>

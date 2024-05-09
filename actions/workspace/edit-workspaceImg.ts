@@ -3,24 +3,27 @@
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
 import { editWorkspaceImgSchema } from "@/validation";
-import { auth } from "@clerk/nextjs";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { UTApi } from "uploadthing/server";
 import { z } from "zod";
+import { currentUser } from "@/lib/auth";
 
 type dataType = z.infer<typeof editWorkspaceImgSchema>;
 
 export const editWorkspaceImgAction = async (data: dataType, workspaceId?: string) => {
   try {
-    const { userId } = auth();
-    if (!userId) return { error: "unauthorized" };
+    const curUser = await currentUser();
+    if (!curUser || !curUser.id) return { error: "unauthorized" };
 
     const { url } = validateMyData(editWorkspaceImgSchema, data);
     if (!workspaceId) return { error: "workspace id is missing" };
     const curWorkspace = await db.workspace.findUnique({
-      where: { id: workspaceId, AdminMemberId: userId },
+      where: { id: workspaceId },
     });
     if (!curWorkspace) return { error: "could not find work space" };
+
+    if (curWorkspace.adminId !== curUser.id)
+      return { error: "you do not have permission to do this action" };
 
     // if there is any img delete it in upload thing
     try {
@@ -37,7 +40,7 @@ export const editWorkspaceImgAction = async (data: dataType, workspaceId?: strin
 
     const workspace = await db.workspace.update({
       data: { icon: url },
-      where: { id: workspaceId, AdminMemberId: userId },
+      where: { id: workspaceId, adminId: curUser.id },
     });
     revalidatePath(`/workspaces/${workspace.id}`);
     revalidatePath(`/workspaces/${workspace.id}/settings`);

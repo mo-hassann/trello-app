@@ -13,27 +13,84 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model workspace {
-  id            String   @unique @default(uuid())
-  name          String
-  members       member[]
-  AdminMemberId String
-  isPublic      Boolean  @default(false)
-  icon          String?
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  bords     board[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model verificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model passwordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+}
+
+model User {
+  id            String      @id @default(cuid())
+  name          String?
+  email         String?     @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  accounts      Account[]
+  role          String      @default("user")
+  workspaceId   String?
+  workspaces    workspace[]
+  boards        board[]
+  card          card[]
+  list          list[]
+}
+
+model workspace {
+  id       String  @id @default(uuid())
+  name     String
+  members  User[]
+  adminId  String
+  isPublic Boolean @default(false)
+  icon     String?
+
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+  bords          board[]
+  invitationLink workspaceInvitationLink?
 }
 
 model board {
-  id              String   @unique @default(uuid())
+  id              String               @id @default(uuid())
   name            String
+  members         User[]
+  adminId         String
   backgroundColor String
-  isFavorite      Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  isFavorite      Boolean              @default(false)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
   lists           list[]
+  invitationLink  boardInvitationLink?
 
   workspaceId String
   workspace   workspace? @relation(fields: [workspaceId], references: [id])
@@ -44,11 +101,14 @@ model list {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  createdBy User     @relation(fields: [userId], references: [id])
   cards     card[]
   index     Int
 
   boardId String?
   board   board?  @relation(fields: [boardId], references: [id])
+
+  userId String
 }
 
 model card {
@@ -59,11 +119,13 @@ model card {
   index       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  createdBy   User     @relation(fields: [userId], references: [id])
 
   attachment attachment?
   list       list?       @relation(fields: [listId], references: [id])
 
   listId String?
+  userId String
 }
 
 model attachment {
@@ -76,15 +138,28 @@ model attachment {
   card card @relation(fields: [cardId], references: [id])
 }
 
-model member {
-  id String @unique
-
-  workspace   workspace? @relation(fields: [workspaceId], references: [id])
-  workspaceId String?
-}
-
 model tag {
   id String @id @unique @default(uuid())
 
   card card[]
+}
+
+model workspaceInvitationLink {
+  id          String    @id @default(uuid())
+  workspace   workspace @relation(fields: [workspaceId], references: [id])
+  workspaceId String    @unique
+
+  createdAt DateTime @default(now())
+
+  @@unique([id, workspaceId])
+}
+
+model boardInvitationLink {
+  id      String @id @default(uuid())
+  board   board  @relation(fields: [boardId], references: [id])
+  boardId String @unique
+
+  createdAt DateTime @default(now())
+
+  @@unique([id, boardId])
 }
