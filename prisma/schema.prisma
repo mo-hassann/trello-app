@@ -51,19 +51,20 @@ model passwordResetToken {
 }
 
 model User {
-  id            String      @id @default(cuid())
-  name          String?
-  email         String?     @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  accounts      Account[]
-  role          String      @default("user")
-  workspaceId   String?
-  workspaces    workspace[]
-  boards        board[]
-  card          card[]
-  list          list[]
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  emailVerified  DateTime?
+  image          String?
+  password       String?
+  accounts       Account[]
+  role           String          @default("user")
+  workspaceId    String?
+  workspaces     workspace[]
+  boards         board[]
+  card           card[]
+  list           list[]
+  favoriteBoards favoriteBoard[]
 }
 
 model workspace {
@@ -76,7 +77,7 @@ model workspace {
 
   createdAt      DateTime                 @default(now())
   updatedAt      DateTime                 @updatedAt
-  bords          board[]
+  boards         board[]
   invitationLink workspaceInvitationLink?
 }
 
@@ -86,7 +87,6 @@ model board {
   members         User[]
   adminId         String
   backgroundColor String
-  isFavorite      Boolean              @default(false)
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
   lists           list[]
@@ -94,6 +94,19 @@ model board {
 
   workspaceId String
   workspace   workspace? @relation(fields: [workspaceId], references: [id])
+
+  favoriteBoard favoriteBoard?
+}
+
+model favoriteBoard {
+  id          String @id @default(uuid())
+  favoritedBy User   @relation(fields: [userId], references: [id])
+  board       board  @relation(fields: [boardId], references: [id])
+  boardId     String @unique
+
+  userId String
+
+  @@unique([id, boardId])
 }
 
 model list {

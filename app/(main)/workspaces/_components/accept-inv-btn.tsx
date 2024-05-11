@@ -4,6 +4,7 @@ import { addWorkspaceMemberViaLink } from "@/actions/workspace/add-workspace-mem
 import Spinner from "@/components/spinner";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { UsersIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 
@@ -26,9 +27,8 @@ export default function AcceptInvBtn({ invitationId }: { invitationId: string })
 
   return (
     <form action={handleSubmit}>
-      <Button disabled={isLoading} type="submit">
-        {" "}
-        {isLoading && <Spinner />} join the workspace
+      <Button className="flex items-center gap-2" disabled={isLoading} type="submit">
+        {isLoading ? <Spinner /> : <UsersIcon />} <span>Join</span>
       </Button>
     </form>
   );

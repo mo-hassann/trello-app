@@ -6,8 +6,8 @@ export const newWorkspaceFormSchema = z.object({
 });
 
 export const editWorkspaceFormSchema = z.object({
-  name: z.string().min(3, "workspace name must be grader then 3"),
-  isPublic: z.boolean(),
+  name: z.string().min(3, "workspace name must be grader then 3").optional(),
+  isPublic: z.boolean().optional(),
 });
 
 export const editWorkspaceImgSchema = z.object({
@@ -18,6 +18,10 @@ export const editWorkspaceImgSchema = z.object({
 export const newBoardFromSchema = z.object({
   name: z.string().min(1, "name is required"),
   boardColor: z.string().min(1, "color is required"),
+});
+
+export const favoriteBoardFromSchema = z.object({
+  favoriteState: z.boolean(),
 });
 
 // lists

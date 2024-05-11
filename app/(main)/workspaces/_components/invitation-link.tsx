@@ -1,62 +1,35 @@
 "use client";
 
-import {
-  createWorkspaceInvLink,
-  deleteWorkspaceInvLink,
-} from "@/actions/workspace/workspace-invitation-link";
 import Spinner from "@/components/spinner";
 import { Button } from "@/components/ui/button";
-import { toast } from "@/components/ui/use-toast";
-import { Trash } from "lucide-react";
-import { useTransition } from "react";
+import { Check, Copy } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default function InvitationLink({
-  invitationLink,
-  workspaceId,
-  adminId,
-}: {
-  invitationLink: string | null;
-  workspaceId: string;
-  adminId: string;
-}) {
-  const [isLoading, startTransition] = useTransition();
+export default function InvitationLink({ tokenId }: { tokenId: string }) {
+  const [link, setLink] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState(false);
 
-  const handleDelete = () => {
-    startTransition(() => {
-      deleteWorkspaceInvLink(invitationLink!).then((data) => {
-        if (data.success) toast({ description: data.success, variant: "success" });
-        if (data.error) toast({ description: data.error, variant: "destructive" });
-      });
-    });
+  useEffect(() => {
+    const origin = window.location.origin;
+    setLink(`${origin}/workspaces/invitation/${tokenId}`);
+  }, [tokenId]);
+
+  const copyToClipBoard = () => {
+    if (link) navigator.clipboard.writeText(link);
+    setCopyStatus(true);
+    setTimeout(() => {
+      setCopyStatus(false);
+    }, 2000);
   };
 
-  if (invitationLink)
-    return (
-      <div className="flex items-center gap-3">
-        <p>{`${location.origin}/workspaces/invitation/${invitationLink}`}</p>
-        <form action={handleDelete}>
-          <Button variant="destructive" disabled={isLoading} type="submit">
-            {isLoading ? <Spinner /> : <Trash size={15} />}
-          </Button>
-        </form>
-      </div>
-    );
-
-  const handleSubmit = () => {
-    startTransition(() => {
-      createWorkspaceInvLink(workspaceId, adminId).then((data) => {
-        if (data.success) toast({ description: data.success, variant: "success" });
-        if (data.error) toast({ description: data.error, variant: "destructive" });
-      });
-    });
-  };
-
-  return (
-    <form action={handleSubmit}>
-      <Button disabled={isLoading} type="submit">
-        {" "}
-        {isLoading && <Spinner />} create link
+  return link ? (
+    <div className="flex items-center gap-2 w-full">
+      <p className="h-auto max-w-[300px] truncate">{link}</p>
+      <Button disabled={copyStatus} onClick={copyToClipBoard} variant="ghost">
+        {copyStatus ? <Check /> : <Copy />}
       </Button>
-    </form>
+    </div>
+  ) : (
+    <Spinner />
   );
 }

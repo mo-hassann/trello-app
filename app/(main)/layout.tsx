@@ -7,7 +7,7 @@ export default function MainRoutes({ children }: { children: ReactNode; currentU
   return (
     <div className="flex flex-col p-3 gap-3 h-full">
       <Navbar />
-      <div className="flex gap-3 h-full">
+      <div className="flex gap-3 h-full overflow-y-auto">
         <Sidebar className="hidden md:flex h-full">
           <WorkSpaceItems />
         </Sidebar>

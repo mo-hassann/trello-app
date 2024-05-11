@@ -1,41 +1,30 @@
 import { db } from "@/db";
-import BoardNavbar from "./_components/board-navbar";
-import { auth } from "@/auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Board from "./_components/board";
-import { unstable_cache as cache } from "next/cache";
-
-const getCurBoard = cache(
-  async ({ boardId, userId }: { boardId: string; userId: string }) =>
-    db.board.findUnique({
-      where: { id: boardId, workspace: { adminId: userId } },
-    }),
-  ["boards"]
-);
-
-const getBoardLists = cache(
-  async ({ boardId, userId }: { boardId: string; userId: string }) =>
-    await db.list.findMany({
-      where: { boardId, board: { workspace: { adminId: userId } } },
-      include: { cards: { orderBy: { index: "asc" } } },
-      orderBy: { index: "asc" },
-    }),
-  ["lists"]
-);
+import { currentUser } from "@/lib/auth";
 
 export default async function BoardPage({ params: { boardId } }: { params: { boardId: string } }) {
-  const { userId } = auth();
-  if (!userId) throw new Error("unauthorized user");
+  const curUser = await currentUser();
+  if (!curUser || !curUser.id) return redirect("/login");
 
-  const curBoard = await getCurBoard({ boardId, userId });
+  const curBoard = await db.board.findUnique({
+    where: {
+      id: boardId,
+      OR: [{ members: { some: { id: curUser.id } } }, { workspace: { isPublic: true } }],
+    },
+  });
   if (!curBoard) return notFound();
 
-  const lists = await getBoardLists({ boardId, userId });
+  const lists = await db.list.findMany({
+    where: { boardId },
+    include: { cards: { orderBy: { index: "asc" } } },
+    orderBy: { index: "asc" },
+  });
 
   return (
     <>
       <div className="size-full opacity-50 absolute top-0 left-0 -z-10" />
-      <BoardNavbar boardName={curBoard.name} />
+      {/* <BoardNavbar boardName={curBoard.name}  /> */}
       <Board boardLists={lists} />
     </>
   );

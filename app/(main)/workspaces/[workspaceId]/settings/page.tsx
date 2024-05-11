@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import EditWorkspaceImg from "../../_components/edit-workspace-img";
 import { currentUser } from "@/lib/auth";
-import InvitationLink from "../../_components/invitation-link";
+import InvitationLinkForm from "../../_components/invitation-link-form";
 
 export default async function WorkspaceSettings({
   params: { workspaceId },
@@ -31,7 +31,7 @@ export default async function WorkspaceSettings({
   if (!curWorkspace) return notFound();
 
   return (
-    <div className="size-full">
+    <>
       <div className="bg-muted p-3 mb-8 rounded-md">
         <div className="w-full bg-background border-2 border-dashed border-primary rounded-md h-[150px]" />
         <Avatar className="size-[100px] mx-auto -mt-[50px] mb-4 relative">
@@ -63,7 +63,7 @@ export default async function WorkspaceSettings({
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-3">
-        <div className="bg-muted rounded-md size-full p-5">
+        <div className="flex flex-col bg-muted rounded-md size-full min-h-[250px] p-5">
           <div className="my-5 space-y-1">
             <h3 className="text-3xl font-bold capitalize">workspace settings</h3>
             <p className="text-muted-foreground">
@@ -72,17 +72,15 @@ export default async function WorkspaceSettings({
           </div>
           <EditWorkspaceForm workspaceName={curWorkspace.name} isPublic={curWorkspace.isPublic} />
         </div>
-        <div className="bg-muted rounded-md size-full p-5">
-          <div className="my-5 space-y-1">
-            <h3 className="text-3xl font-bold capitalize">invitation link</h3>
-          </div>
-          <InvitationLink
-            invitationLink={curWorkspace.invitationLink?.id || null}
+        <div className="flex flex-col bg-muted rounded-md size-full min-h-[250px] p-5">
+          <h3 className="text-3xl font-bold capitalize my-5">invitation link</h3>
+          <InvitationLinkForm
+            InvitationTokenId={curWorkspace.invitationLink?.id || null}
             workspaceId={workspaceId}
             adminId={curUser.id}
           />
         </div>
       </div>
-    </div>
+    </>
   );
 }
