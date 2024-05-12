@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
 import { cardsToReorderSchema } from "@/validation";
 import { auth } from "@/auth";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 type dataType = z.infer<typeof cardsToReorderSchema>;
@@ -34,7 +34,6 @@ export const reorderCardAction = async (data: dataType, boardId: string) => {
     );
 
     revalidatePath(`/boards/${curBoard.id}`);
-    revalidateTag(`lists`);
 
     return { success: `${curBoard.name} cards reordered successfully` };
   } catch (error: any) {

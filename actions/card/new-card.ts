@@ -9,7 +9,7 @@ import { z } from "zod";
 
 type dataType = z.infer<typeof newCardFromSchema>;
 
-export const createNewCard = async (data: dataType, boardId: string, listId: string) => {
+export const createNewCard = async (data: dataType, listId: string) => {
   try {
     const curUser = await currentUser();
     if (!curUser || !curUser.id) return { error: "unauthorized" };
@@ -18,7 +18,7 @@ export const createNewCard = async (data: dataType, boardId: string, listId: str
 
     const curList = await db.list.findUnique({
       where: { id: listId },
-      select: { id: true, board: { select: { members: { select: { id: true } } } } },
+      select: { id: true, board: { select: { id: true, members: { select: { id: true } } } } },
     });
     if (!curList) return { error: "list does not exist" };
 
@@ -34,7 +34,7 @@ export const createNewCard = async (data: dataType, boardId: string, listId: str
       data: { title, listId: curList.id, index: cardsNumbers, userId: curUser.id },
     });
 
-    revalidatePath(`/boards/${boardId}`);
+    revalidatePath(`/boards/${curList.board?.id}`);
 
     return { success: `${newCard.title} created successfully`, data: newCard };
   } catch (error: any) {

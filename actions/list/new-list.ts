@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { currentUser } from "@/lib/auth";
 import { validateMyData } from "@/lib/validate-data";
 import { newListFromSchema } from "@/validation";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 type dataType = z.infer<typeof newListFromSchema>;
@@ -35,8 +35,7 @@ export const createNewList = async (data: dataType, boardId?: string) => {
       data: { name, boardId: curBoard.id, index: listNumbers, userId: curUser.id },
     });
 
-    revalidatePath(`/boards/${newList.boardId}`);
-    revalidateTag(`lists`);
+    revalidatePath(`/boards/${curBoard.id}`);
 
     return { success: `${newList.name} created successfully`, data: newList };
   } catch (error: any) {

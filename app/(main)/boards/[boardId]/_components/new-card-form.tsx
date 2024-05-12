@@ -28,7 +28,7 @@ export default function NewCardForm({ listId }: { listId: string }) {
 
   const onSubmit = (values: dataType) => {
     startTransition(() => {
-      createNewCard(values, boardId, listId)
+      createNewCard(values, listId)
         .then((data) => {
           if (data.success) toast({ description: data.success, variant: "success" });
           if (data.error) toast({ description: data.error, variant: "destructive" });
