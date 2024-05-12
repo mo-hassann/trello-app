@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Pencil, Link, Plus } from "lucide-react";
 import UserIcon from "@/components/user-icon";
 import EditWorkspaceNameForm from "./edit-workspace-name-form";
-import InvitationLink from "./invitation-link";
+import InvitationLink from "../../../../components/invitation-link";
 type WorkspaceNavbarProps = {
   workspaceName: string;
   members: { name: string | null; image: string | null; email: string | null; id: string }[];
@@ -57,7 +57,7 @@ export default function WorkspaceNavbar({
                 <Link />
               </PopoverTrigger>
               <PopoverContent className="w-[450px]">
-                <InvitationLink tokenId={invitationTokenId} />
+                <InvitationLink linkTo="workspaces" tokenId={invitationTokenId} />
               </PopoverContent>
             </Popover>
           )}
@@ -72,10 +72,15 @@ export default function WorkspaceNavbar({
           ))}
         </ul>
         {isCurUserIsAdminUser && (
-          <Button variant="ghost" className="space-x-1 text-primary">
-            <Plus className="bg-primary/20 rounded-sm p-[2px]" size={14} />
-            <span>invite</span>
-          </Button>
+          <Popover>
+            <PopoverTrigger className="inline-flex items-center justify-center whitespace-nowrap px-4 py-3 rounded-md space-x-2 text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-foreground bg-primary/20 hover:bg-primary hover:text-white hover:text-accent-foreground">
+              <Plus className="bg-primary/20 rounded-sm p-[2px]" size={14} />
+              <span>invite</span>
+            </PopoverTrigger>
+            <PopoverContent>
+              <p>search users</p>
+            </PopoverContent>
+          </Popover>
         )}
       </div>
     </div>

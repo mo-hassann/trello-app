@@ -2,19 +2,19 @@
 
 import { db } from "@/db";
 import { validateMyData } from "@/lib/validate-data";
-import { newBoardFromSchema } from "@/validation";
+import { newBoardFormSchema } from "@/validation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { currentUser } from "@/lib/auth";
 
-type dataType = z.infer<typeof newBoardFromSchema>;
+type dataType = z.infer<typeof newBoardFormSchema>;
 
 export const createNewBoard = async (data: dataType, workspaceId: string) => {
   try {
     const curUser = await currentUser();
     if (!curUser || !curUser.id) return { error: "unauthorized" };
 
-    const { name, boardColor } = validateMyData(newBoardFromSchema, data);
+    const { name, boardColor } = validateMyData(newBoardFormSchema, data);
 
     const curWorkspace = await db.workspace.findUnique({
       where: { id: workspaceId },

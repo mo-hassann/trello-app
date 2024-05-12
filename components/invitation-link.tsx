@@ -5,14 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export default function InvitationLink({ tokenId }: { tokenId: string }) {
+export default function InvitationLink({
+  tokenId,
+  linkTo,
+}: {
+  tokenId: string;
+  linkTo: "workspaces" | "boards";
+}) {
   const [link, setLink] = useState<string | null>(null);
   const [copyStatus, setCopyStatus] = useState(false);
 
   useEffect(() => {
     const origin = window.location.origin;
-    setLink(`${origin}/workspaces/invitation/${tokenId}`);
-  }, [tokenId]);
+    setLink(`${origin}/${linkTo}/invitation/${tokenId}`);
+  }, [tokenId, linkTo]);
 
   const copyToClipBoard = () => {
     if (link) navigator.clipboard.writeText(link);

@@ -5,6 +5,7 @@ import NewBoard from "../_components/new-board";
 import { notFound, redirect } from "next/navigation";
 import { currentUser } from "@/lib/auth";
 import WorkspaceNavbar from "../_components/workspace-navbar";
+import WarningMessage from "@/components/warning-message";
 
 export default async function workspacePage({
   params: { workspaceId },
@@ -28,6 +29,7 @@ export default async function workspacePage({
   if (!workspace) return notFound();
 
   const isCurUserIsAdminUser = workspace.adminId === curUser.id;
+  const isCurUserIsMemberUser = workspace.members.some((member) => member.id === curUser.id);
 
   const boards = await db.board.findMany({
     where: { workspaceId },
@@ -46,6 +48,9 @@ export default async function workspacePage({
 
   return (
     <>
+      {!isCurUserIsMemberUser && (
+        <WarningMessage message="This is public workspace and you are not member in this workspace." />
+      )}
       <WorkspaceNavbar
         isCurUserIsAdminUser={isCurUserIsAdminUser}
         workspaceName={workspace?.name}

@@ -15,9 +15,13 @@ export const editWorkspaceImgSchema = z.object({
 });
 
 // boards
-export const newBoardFromSchema = z.object({
+export const newBoardFormSchema = z.object({
   name: z.string().min(1, "name is required"),
   boardColor: z.string().min(1, "color is required"),
+});
+
+export const editBoardFormSchema = z.object({
+  name: z.string().min(3, "name is required"),
 });
 
 export const favoriteBoardFromSchema = z.object({

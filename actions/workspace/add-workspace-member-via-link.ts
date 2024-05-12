@@ -31,7 +31,7 @@ export const addWorkspaceMemberViaLink = async (invitationId: string) => {
     const workspaceWithNewUser = await db.workspace.update({
       where: { id: invitationLink.workspaceId },
       data: { members: { connect: { id: curUser.id } } },
-      select: { boards: { select: { id: true } } },
+      select: { id: true, boards: { select: { id: true } } },
     });
 
     // connect user with all the boards in the workspace

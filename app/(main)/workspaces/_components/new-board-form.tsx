@@ -19,14 +19,14 @@ import { toast } from "@/components/ui/use-toast";
 import { useParams } from "next/navigation";
 import { createNewBoard } from "@/actions/board/new-board";
 import { DialogFooter } from "@/components/ui/dialog";
-import { newBoardFromSchema } from "@/validation";
+import { newBoardFormSchema } from "@/validation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-type dataType = z.infer<typeof newBoardFromSchema>;
+type dataType = z.infer<typeof newBoardFormSchema>;
 
 export default function NewBoardFrom() {
   const form = useForm<dataType>({
-    resolver: zodResolver(newBoardFromSchema),
+    resolver: zodResolver(newBoardFormSchema),
     defaultValues: {
       name: "",
       boardColor: "",

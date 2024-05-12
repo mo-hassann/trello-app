@@ -12,9 +12,10 @@ type ListProps = {
   id: string;
   listName: string;
   cards: card[];
+  isCurUserIsMemberUser: boolean;
 };
 
-export default function List({ id, listName, cards }: ListProps) {
+export default function List({ id, listName, cards, isCurUserIsMemberUser }: ListProps) {
   return (
     <div className="rounded-lg p-3 bg-muted text-muted-foreground w-[310px] max-h-[600px] overflow-y-auto flex-shrink-0">
       <div className="flex items-center justify-between">
@@ -25,9 +26,11 @@ export default function List({ id, listName, cards }: ListProps) {
             <span>{cards.length}</span>
           </div>
         </div>
-        <Button className="p-0 hover:bg-slate-200/20 size-8 text-sm" variant="ghost">
-          <MoreHorizontalIcon />
-        </Button>
+        {isCurUserIsMemberUser && (
+          <Button className="p-0 hover:bg-slate-200/20 size-8 text-sm" variant="ghost">
+            <MoreHorizontalIcon />
+          </Button>
+        )}
       </div>
       <div className="w-full h-[3px] bg-primary rounded-full my-4" />
       <Droppable droppableId={`${id}`} type="LIST">
@@ -47,7 +50,12 @@ export default function List({ id, listName, cards }: ListProps) {
               )}
               {cards.length > 0 &&
                 cards.map((card, i) => (
-                  <Draggable key={card.id} draggableId={`${card.id}`} index={i}>
+                  <Draggable
+                    key={card.id}
+                    draggableId={`${card.id}`}
+                    index={i}
+                    isDragDisabled={!isCurUserIsMemberUser}
+                  >
                     {(provided, snapshot) => (
                       <div
                         ref={provided.innerRef}
@@ -56,19 +64,21 @@ export default function List({ id, listName, cards }: ListProps) {
                         className="bg-background rounded-xl p-4 hover:border-primary flex justify-between"
                       >
                         <CardContent title={card.title} />
-                        <Button
-                          variant="ghost"
-                          className="p-2 bg-slate-200/20 hover:bg-primary hover:text-white size-8 text-xs rounded-full"
-                        >
-                          <Pen />
-                        </Button>
+                        {isCurUserIsMemberUser && (
+                          <Button
+                            variant="ghost"
+                            className="p-2 bg-slate-200/20 hover:bg-primary hover:text-white size-8 text-xs rounded-full"
+                          >
+                            <Pen />
+                          </Button>
+                        )}
                       </div>
                     )}
                   </Draggable>
                 ))}
             </div>
             {provided.placeholder}
-            <NewCardForm listId={id} />
+            {isCurUserIsMemberUser && <NewCardForm listId={id} />}
           </div>
         )}
       </Droppable>

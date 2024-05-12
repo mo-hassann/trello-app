@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { Trash } from "lucide-react";
 import { useTransition } from "react";
-import InvitationLink from "./invitation-link";
+import InvitationLink from "../../../../components/invitation-link";
 import { useMounted } from "@/hooks/useMounted";
 
 export default function InvitationLinkForm({
@@ -43,7 +43,7 @@ export default function InvitationLinkForm({
   if (InvitationTokenId)
     return (
       <div className="flex items-center justify-between gap-3 w-full">
-        <InvitationLink tokenId={InvitationTokenId} />
+        <InvitationLink linkTo="workspaces" tokenId={InvitationTokenId} />
         <form action={handleDelete}>
           <Button variant="destructive" disabled={isLoading} type="submit">
             {isLoading ? <Spinner /> : <Trash size={15} />}

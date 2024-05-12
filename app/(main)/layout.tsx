@@ -11,9 +11,9 @@ export default function MainRoutes({ children }: { children: ReactNode; currentU
         <Sidebar className="hidden md:flex h-full">
           <WorkSpaceItems />
         </Sidebar>
-        <div className="bg-muted/20 p-3 rounded-md w-full h-full overflow-x-hidden relative">
+        <main className="bg-muted/20 p-3 rounded-md w-full h-full overflow-x-hidden relative">
           {children}
-        </div>
+        </main>
       </div>
     </div>
   );

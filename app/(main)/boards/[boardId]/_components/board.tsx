@@ -7,14 +7,21 @@ import List from "./list";
 import NewList from "./new-list";
 import { toast } from "@/components/ui/use-toast";
 import { reorderListsAction } from "@/actions/list/reorder-lists";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { reorderCardAction } from "@/actions/card/reorder-cards";
 
-export default function Board({ boardLists }: { boardLists: (list & { cards: card[] })[] }) {
+export default function Board({
+  boardLists,
+  isCurUserIsMemberUser,
+}: {
+  boardLists: (list & { cards: card[] })[];
+  isCurUserIsMemberUser: boolean;
+}) {
   const [lists, setLists] = useState(boardLists);
   const [cards, setCards] = useState(boardLists.flatMap((list) => list.cards));
   const { boardId } = useParams<{ boardId: string }>();
   const [isLoading, startTransition] = useTransition();
+  const router = useRouter();
 
   // reorder the lists in the board
   const reorderLists = (curIndex: number, newIndex: number) => {
@@ -40,10 +47,14 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
 
     // reorder the items in the db
     startTransition(() => {
-      reorderListsAction(bulkUpdateData, boardId).then((data) => {
-        if (data.success) toast({ description: data.success, variant: "success" });
-        if (data.error) toast({ description: data.error, variant: "destructive" });
-      });
+      reorderListsAction(bulkUpdateData, boardId)
+        .then((data) => {
+          if (data.success) toast({ description: data.success, variant: "success" });
+          if (data.error) toast({ description: data.error, variant: "destructive" });
+        })
+        .finally(() => {
+          router.refresh();
+        });
     });
 
     // reorder the items in the state
@@ -82,7 +93,7 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
       setCards([...cardsWithoutCurListCards, ...curListCards]);
     }
 
-    // if the cards moves to other list change the position of the cards and the list id of the moved card
+    // if the cards moves to other list, change the position of the cards and the list id of the moved card
     if (curListId !== newListId) {
       const curListCards = cards.filter((card) => card.listId === curListId);
       const newListCards = cards.filter((card) => card.listId === newListId);
@@ -115,15 +126,18 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
     }
 
     startTransition(() => {
-      reorderCardAction(bulkUpdateData, boardId).then((data) => {
-        if (data.success) toast({ description: data.success, variant: "success" });
-        if (data.error) toast({ description: data.error, variant: "destructive" });
-      });
+      reorderCardAction(bulkUpdateData, boardId)
+        .then((data) => {
+          if (data.success) toast({ description: data.success, variant: "success" });
+          if (data.error) toast({ description: data.error, variant: "destructive" });
+        })
+        .finally(() => {
+          router.refresh();
+        });
     });
   };
 
   const HandleOnDragEnd = (action: DropResult) => {
-    console.log(action);
     if (!action.destination) return;
     if (action.type === "BOARD") reorderLists(action.source.index, action.destination.index);
     if (action.type === "LIST")
@@ -150,7 +164,12 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
           >
             <div className="flex items-start space-x-5 overflow-x-auto w-full py-3 px-2">
               {lists.map((list, i) => (
-                <Draggable key={list.id} draggableId={`${list.id}`} index={i}>
+                <Draggable
+                  key={list.id}
+                  draggableId={`${list.id}`}
+                  index={i}
+                  isDragDisabled={!isCurUserIsMemberUser}
+                >
                   {(provided, snapshot) => (
                     <div
                       ref={provided.innerRef}
@@ -164,13 +183,14 @@ export default function Board({ boardLists }: { boardLists: (list & { cards: car
                         cards={cards
                           .filter((card) => card?.listId === list.id)
                           .sort((card) => card.index)}
+                        isCurUserIsMemberUser={isCurUserIsMemberUser}
                       />
                     </div>
                   )}
                 </Draggable>
               ))}
               {provided.placeholder}
-              <NewList />
+              {isCurUserIsMemberUser && <NewList />}
             </div>
           </div>
         )}
