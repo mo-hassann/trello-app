@@ -57,9 +57,9 @@ To get a local copy of this project up and running, follow these steps.
     Create a `.env` file in the root directory and add the following variables:
 
     ```env
+    AUTH_TRUST_HOST=true
     DATABASE_URL=your_database_url
-    NEXTAUTH_URL=your_nextauth_url
-    NEXTAUTH_SECRET=your_nextauth_secret
+    AUTH_SECRET=any_random_secret
     ```
 
 4. **Run Prisma migrations:**
