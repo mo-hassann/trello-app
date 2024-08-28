@@ -115,7 +115,7 @@ Please make sure to update tests as appropriate.
 
 ## 🐛 Issues
 
-If you encounter any issues while using or setting up the project, please check the [Issues](https://github.com/your-username/trello-app/issues) section to see if it has already been reported. If not, feel free to open a new issue detailing the problem.
+If you encounter any issues while using or setting up the project, please check the [Issues](https://github.com/mo-hassann/trello-app/issues) section to see if it has already been reported. If not, feel free to open a new issue detailing the problem.
 
 When reporting an issue, please include:
 
